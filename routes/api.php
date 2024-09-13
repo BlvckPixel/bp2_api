@@ -18,6 +18,7 @@ use App\Http\Controllers\dashboard\EditorialController;
 use App\Http\Controllers\LogAccessController;
 use App\Http\Controllers\SubscriptionsController as ControllersSubscriptionsController;
 use App\Models\Contentcard;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,8 @@ Route::get('/send-test-email', [AuthController::class, 'sendTestEmail']);
 Route::post('forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('/validate-reset-token', [AuthController::class, 'validateResetToken']);
 Route::post('/change-password', [AuthController::class, 'changePassword']);
+
+Route::post('/payment', [PaymentController::class, 'createPayment']);
 
 Route::middleware('auth.api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -108,6 +111,3 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/dashboard/blvckbox/{slug}/conclusion', [ConclusionController::class, 'getEditorial']);
     Route::post('/dashboard/blvckbox/{slug}/conclusion', [ConclusionController::class, 'storeOrUpdate']);
 });
-
-
-

@@ -22,7 +22,7 @@ class AccountActivationMail extends Mailable
     public function __construct($user, $activationToken)
     {
         $this->user = $user;
-        $this->token = $activationToken;    
+        $this->token = $activationToken;
     }
 
     /**
@@ -33,10 +33,10 @@ class AccountActivationMail extends Mailable
     public function build()
     {
         return $this->view('emails.accountActivation')
-                    ->subject('Blvckpixel: Account Activation')
-                    ->with([
-                        'user' => $this->user,
-                        'token' => $this->token
-                    ]);
+            ->subject('Blvckpixel: Account Activation')
+            ->with([
+                'user' => $this->user,
+                'token' => $this->token
+            ]);
     }
 }

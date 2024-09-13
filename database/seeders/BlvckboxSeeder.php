@@ -34,7 +34,6 @@ class BlvckboxSeeder extends Seeder
             'description' => 'An intricate design of a human profile overlaid with digital patterns.',
             'date' => '2024-01-01',
             'background' => 'img2.png',
-            'image' => 'img2.png',
         ]);
     }
 }
