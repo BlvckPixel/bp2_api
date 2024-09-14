@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -26,7 +27,8 @@ class User extends Authenticatable
         'package_id',
         'api_token',
         'activation_token',
-        'role_id'
+        'role_id',
+        'uuid',
     ];
 
     /**
@@ -63,5 +65,14 @@ class User extends Authenticatable
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->uuid = (string) Str::uuid();
+        });
     }
 }

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Stripe\Stripe;
-use Stripe\Charge;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Stripe\PaymentIntent;
+use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -15,9 +16,7 @@ class PaymentController extends Controller
     {
         // Validate request data
         $validation = Validator::make($request->all(), [
-            'amount' => 'required|numeric|min:1',
-            // 'currency' => 'required|string',
-            // 'token' => 'required|string', // Stripe token from the frontend
+            'user_id' => 'required|string',
         ]);
 
         if ($validation->fails()) {
@@ -30,10 +29,37 @@ class PaymentController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
 
         try {
+            $user = User::where('uuid', $request->user_id)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            $payment = $user->payments()->where('status', 'pending')->first();
+
+            if (!$payment) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No pending payment found',
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // convert amount to to string
+            $amount = round($payment->amount, 2) * 100;
+
+            Log::channel('stderr')->info('Amount: ' . $amount);
+
+
             $paymentIntent = PaymentIntent::create([
-                'amount' => $request->amount * 100,
-                'currency' => 'usd',
+                'amount' => $amount,
+                'currency' => 'gbp',
                 'payment_method_types' => ['card'],
+                'metadata' => [
+                    'user_id' => $user->uuid,
+                ],
             ]);
 
             return response()->json([

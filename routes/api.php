@@ -19,6 +19,7 @@ use App\Http\Controllers\LogAccessController;
 use App\Http\Controllers\SubscriptionsController as ControllersSubscriptionsController;
 use App\Models\Contentcard;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,4 +111,16 @@ Route::middleware('auth.api')->group(function () {
 
     Route::get('/dashboard/blvckbox/{slug}/conclusion', [ConclusionController::class, 'getEditorial']);
     Route::post('/dashboard/blvckbox/{slug}/conclusion', [ConclusionController::class, 'storeOrUpdate']);
+});
+
+
+// webhook endpoints
+Route::group(['prefix' => 'webhooks'], function () {
+    Route::group(['prefix' => 'stripe'], function () {
+        Route::post('/', [WebhookController::class, 'handleStripeWebhook']);
+        Route::post('/create', [WebhookController::class, 'handleCreateStripeWebhookEndpoint']);
+        Route::get('/list', [WebhookController::class, 'listStripeWebhookEndpoints']);
+        Route::delete('/delete/{id}', [WebhookController::class, 'deleteStripeWebhookEndpoint']);
+    });
+    Route::get('/test', [WebhookController::class, 'test']);
 });

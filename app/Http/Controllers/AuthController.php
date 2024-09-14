@@ -19,12 +19,22 @@ use App\Models\Package;
 use App\Models\Payment;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
+
+        $validation = Validator::make($credentials, [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(['error' => 'Validation failed', 'errors' => $validation->errors()->toArray()], 400);
+        }
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
@@ -52,7 +62,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'token' => $user->api_token,
-            ]);
+            ], 200);
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);
@@ -87,7 +97,7 @@ class AuthController extends Controller
             'package_id' => $package->id,
             'amount' => $package->price,
             'status' => 'pending',
-            'paid_at' => now(),
+            // 'paid_at' => now(),
         ]);
 
         // $user = (object) [
@@ -190,6 +200,8 @@ class AuthController extends Controller
         if (!$user instanceof User) {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
+
+        $user->load('payments');
 
         return response()->json($user);
     }
