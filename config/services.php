@@ -34,4 +34,10 @@ return [
         'secret' => env('STRIPE_SECRET_KEY'),
         'public' => env('STRIPE_PUBLIC_KEY'),
     ],
+
+    'mailchimp' => [
+        'key' => env('MAILCHIMP_API_KEY'),
+        'audience' => env('MAILCHIMP_AUDIENCE_ID'),
+        'server' => env('MAILCHIMP_SERVER_PREFIX'),
+    ],
 ];
