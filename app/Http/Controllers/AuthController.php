@@ -100,17 +100,17 @@ class AuthController extends Controller
             // 'paid_at' => now(),
         ]);
 
-        // $user = (object) [
-        //     'name' => 'Roqeeb Yusuff',
-        // ];
+        $user = (object) [
+            'name' => 'Blvckbook',
+        ];
 
-        // $name = $user->name;
+        $name = $user->name;
 
-        // $activationToken = Str::random(60);
+        $activationToken = Str::random(60);
 
-        // Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+        Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
 
-        // Mail::to('roqeebyusuff17@gmail.com')->send(new AccountActivationMail($user, $activationToken));
+        Mail::to('roqeebyusuff17@gmail.com')->send(new AccountActivationMail($user, $activationToken));
 
 
 
