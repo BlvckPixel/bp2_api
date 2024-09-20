@@ -20,6 +20,7 @@ use App\Http\Controllers\SubscriptionsController as ControllersSubscriptionsCont
 use App\Models\Contentcard;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\MailchimpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -123,4 +124,11 @@ Route::group(['prefix' => 'webhooks'], function () {
         Route::delete('/delete/{id}', [WebhookController::class, 'deleteStripeWebhookEndpoint']);
     });
     Route::get('/test', [WebhookController::class, 'test']);
+});
+
+// mailchimp
+Route::group(['prefix' => 'mailchimp'], function () {
+    Route::post('/audience', [MailchimpController::class, 'createMailchimpAudience']);
+    Route::post('/audience/add-member', [MailchimpController::class, 'addMemberToMailchimpAudience']);
+    Route::get('/audience/members', [MailchimpController::class, 'listMailchimpAudienceMembers']);
 });
