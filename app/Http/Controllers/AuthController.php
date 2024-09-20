@@ -68,6 +68,59 @@ class AuthController extends Controller
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
+    // public function register(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+    //         'password' => ['required', 'string', 'min:8', 'confirmed'],
+    //         'selectedPackage' => ['required', 'integer'],
+    //         'selectedPackageName' => ['required', 'string']
+    //     ]);
+
+    //     $activationToken = Str::random(60);
+
+    //     $package = Package::where('id', $validatedData['selectedPackage'])->firstOrFail();
+
+    //     $user = User::create([
+    //         'name' => $validatedData['name'],
+    //         'email' => $validatedData['email'],
+    //         'password' => Hash::make($validatedData['password']),
+    //         'selected_package' => $validatedData['selectedPackageName'],
+    //         'package_id' => $validatedData['selectedPackage'],
+    //         'activation_token' => $activationToken,
+    //         'role_id' => 3,
+    //     ]);
+
+    //     Payment::create([
+    //         'user_id' => $user->id,
+    //         'package_id' => $package->id,
+    //         'amount' => $package->price,
+    //         'status' => 'pending',
+    //         // 'paid_at' => now(),
+    //     ]);
+
+    //     // $user = (object) [
+    //     //     'name' => 'Roqeeb Yusuff',
+    //     // ];
+
+    //     // $name = $user->name;
+
+    //     // $activationToken = Str::random(60);
+
+    //     // Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+
+    //     // Mail::to('roqeebyusuff17@gmail.com')->send(new AccountActivationMail($user, $activationToken));
+
+
+
+    //     $token = Str::random(60);
+    //     $user->api_token = hash('sha256', $token);
+    //     $user->save();
+
+    //     return response()->json(['user' => $user, 'token' => $user->api_token, 'activationToken' => $activationToken], 201);
+    // }
+
     public function register(Request $request)
     {
         $validatedData = $request->validate([
@@ -97,22 +150,13 @@ class AuthController extends Controller
             'package_id' => $package->id,
             'amount' => $package->price,
             'status' => 'pending',
-            // 'paid_at' => now(),
         ]);
 
-        // $user = (object) [
-        //     'name' => 'Roqeeb Yusuff',
-        // ];
+        // Send the activation email to the user
+        Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
 
-        // $name = $user->name;
-
-        // $activationToken = Str::random(60);
-
-        // Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
-
-        // Mail::to('roqeebyusuff17@gmail.com')->send(new AccountActivationMail($user, $activationToken));
-
-
+        // Optional: Send a notification email to an admin or a specific address
+        // Mail::to('admin@example.com')->send(new AccountActivationMail($user, $activationToken));
 
         $token = Str::random(60);
         $user->api_token = hash('sha256', $token);
@@ -120,6 +164,7 @@ class AuthController extends Controller
 
         return response()->json(['user' => $user, 'token' => $user->api_token, 'activationToken' => $activationToken], 201);
     }
+
 
 
     public function logout(Request $request)
