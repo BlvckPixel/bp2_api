@@ -21,6 +21,10 @@ use App\Models\Contentcard;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\MailchimpController;
+use App\Http\Controllers\EmailController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +76,9 @@ Route::get('blvckcards/show/{slug}', [BlvckcardsController::class, 'show']);
 Route::put('/blvckboxes/{id}', [BlvckboxController::class, 'update']);
 Route::delete('/blvckboxes/{id}', [BlvckboxController::class, 'destroy']);
 Route::get('/packages', [ControllersSubscriptionsController::class, 'index']);
+// Added By Brobot Email thing
+Route::post('/send-email', [EmailController::class, 'sendCustomEmail']);
+// Ended Here
 
 
 Route::middleware('auth.api')->group(function () {
