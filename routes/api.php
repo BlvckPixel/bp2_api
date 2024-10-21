@@ -26,6 +26,7 @@ use App\Http\Controllers\EmailController;
 
 
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,6 +38,10 @@ use App\Http\Controllers\EmailController;
 |
 */
 
+// Added By Brobot Email thing
+
+// Ended Here
+
 Route::middleware('auth.api')->group(function () {
     Route::get('/track', [LogAccessController::class, 'logAccess']);
     Route::get('/track/stats', [LogAccessController::class, 'index']);
@@ -44,13 +49,18 @@ Route::middleware('auth.api')->group(function () {
 });
 
 // Website
+Route::post('/send-custom-email', [EmailController::class, 'sendCustomEmail']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/activate-account/{token}', [AuthController::class, 'activateAccount']);
 Route::get('/send-test-email', [AuthController::class, 'sendTestEmail']);
+// Route::post('/sendemails', [EmailController::class, 'sendcustomemail']);
 Route::post('forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('/validate-reset-token', [AuthController::class, 'validateResetToken']);
 Route::post('/change-password', [AuthController::class, 'changePassword']);
+
+// Custome Email
+// Route::post('/send-custom-email', [EmailController::class, 'sendcustomemail']);
 
 Route::post('/payment', [PaymentController::class, 'createPayment']);
 
@@ -76,9 +86,7 @@ Route::get('blvckcards/show/{slug}', [BlvckcardsController::class, 'show']);
 Route::put('/blvckboxes/{id}', [BlvckboxController::class, 'update']);
 Route::delete('/blvckboxes/{id}', [BlvckboxController::class, 'destroy']);
 Route::get('/packages', [ControllersSubscriptionsController::class, 'index']);
-// Added By Brobot Email thing
-Route::post('/send-email', [EmailController::class, 'sendCustomEmail']);
-// Ended Here
+
 
 
 Route::middleware('auth.api')->group(function () {
