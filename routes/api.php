@@ -22,6 +22,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\MailchimpController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\FeatureController;
 
 
 
@@ -47,6 +48,22 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/track/stats', [LogAccessController::class, 'index']);
     Route::get('/track/revenue-stats', [LogAccessController::class, 'revenueStats']);
 });
+
+// Features Added
+
+// routes/api.php
+
+Route::prefix('features')->group(function () {
+    Route::get('/', [FeatureController::class, 'index']);
+    Route::post('/', [FeatureController::class, 'store']);
+    Route::get('/{feature}', [FeatureController::class, 'show']);
+    Route::put('/{feature}', [FeatureController::class, 'update']);
+    Route::delete('/{feature}', [FeatureController::class, 'destroy']);
+});
+
+// Ended
+
+
 
 // Website
 Route::post('/send-custom-email', [EmailController::class, 'sendCustomEmail']);
