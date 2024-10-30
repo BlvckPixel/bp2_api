@@ -29,6 +29,9 @@ class User extends Authenticatable
         'activation_token',
         'role_id',
         'uuid',
+        'payment_method', 
+        'stripe_customer_id',
+        'stripe_subscription_id'
     ];
 
     /**
