@@ -18,10 +18,13 @@ class ContentcardsController extends Controller
 
         $editorial = Editorial::where('blvckbox_id', $blvckbox->id)->first();
 
+        $conclusion = Conclusion::where('blvckbox_id', $blvckbox->id)->first();
+
 
         return response()->json([
             'contentcards' => $contentcards,
             'editorial' => $editorial,
+            'conclusion' => $conclusion,
         ]);
     }
 
