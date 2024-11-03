@@ -15,7 +15,7 @@
         "mailchimp/mailchimp": "^2.0",
         "mailchimp/marketing": "^3.0",
         "mailchimp/transactional": "^1.0",
-        "stripe/stripe-php": "^15.8"
+        "stripe/stripe-php": "^16.2"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

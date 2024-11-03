@@ -23,6 +23,8 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\MailchimpController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UserController; 
 
 
 
@@ -47,7 +49,22 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/track', [LogAccessController::class, 'logAccess']);
     Route::get('/track/stats', [LogAccessController::class, 'index']);
     Route::get('/track/revenue-stats', [LogAccessController::class, 'revenueStats']);
+
+    Route::post('/user/payment-method', [UserController::class, 'updatePaymentMethod']);
+    Route::controller(SubscriptionController::class)->group(function () {
+        Route::post('/subscribe', 'subscribe');
+        Route::post('/subscription/change', 'changeSubscription');
+        Route::post('/subscription/cancel', 'cancelSubscription');
+    });
+    // Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
+    // Route::post('/subscription/change', [SubscriptionController::class, 'changeSubscription']);
+    // Route::post('/subscription/cancel', [SubscriptionController::class, 'cancelSubscription']);
 });
+
+
+// Route::middleware('auth:api')->group(function () {
+//     Route::post('/user/payment-method', [UserController::class, 'updatePaymentMethod']);
+// });
 
 // Features Added
 
@@ -62,6 +79,18 @@ Route::prefix('features')->group(function () {
 });
 
 // Ended
+
+
+
+// subs started
+
+// Route::middleware(['auth:api'])->group(function () {
+    
+// });
+
+Route::post('/webhook/stripe', [SubscriptionController::class, 'webhook']);
+
+// subs ended
 
 
 
