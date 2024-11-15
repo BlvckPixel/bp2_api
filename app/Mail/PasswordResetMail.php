@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\EmailTemplate;
 
 class PasswordResetMail extends Mailable
 {
@@ -33,10 +34,22 @@ class PasswordResetMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.password_reset')
-            ->with([
-                'user' => $this->user,
-                'token' => $this->token,
-            ]);
+        $template = EmailTemplate::where('name', 'Password Reset')->firstOrFail();
+
+
+        $parsedBody = str_replace(
+            ['{{ $user }}', '{{ $token }}'],
+            [$this->user, $this->token],
+            $template->body
+        );
+
+        return $this->html($parsedBody)
+            ->subject($template->subject);
+
+        // return $this->view('emails.password_reset')
+        //     ->with([
+        //         'user' => $this->user,
+        //         'token' => $this->token,
+        //     ]);
     }
 }

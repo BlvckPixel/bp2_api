@@ -25,6 +25,10 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController; 
+use App\Http\Controllers\EmailTempController;
+use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\PayingController;
+
 
 
 
@@ -108,6 +112,26 @@ Route::post('/change-password', [AuthController::class, 'changePassword']);
 // Custome Email
 // Route::post('/send-custom-email', [EmailController::class, 'sendcustomemail']);
 
+
+Route::prefix('email-templates')->group(function () {
+    Route::get('/', [EmailTemplateController::class, 'index']); // Get all templates
+    Route::get('/{id}', [EmailTemplateController::class, 'show']); // Get a single template by ID
+    Route::post('/', [EmailTemplateController::class, 'store']); // Create a new template
+    Route::put('/{id}', [EmailTemplateController::class, 'update']); // Update a template
+    Route::delete('/{id}', [EmailTemplateController::class, 'destroy']); // Delete a template
+});
+
+
+// demo payment crud
+Route::prefix('user/{userId}/payments')->group(function () {
+    Route::get('/', [PayingController::class, 'index']);
+    Route::get('{id}', [PayingController::class, 'show']);
+    Route::post('/', [PayingController::class, 'store']);
+    Route::put('{id}', [PayingController::class, 'update']);
+    Route::delete('{id}', [PayingController::class, 'destroy']);
+});
+
+
 Route::post('/payment', [PaymentController::class, 'createPayment']);
 
 Route::middleware('auth.api')->group(function () {
@@ -118,6 +142,10 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/user/role', [AuthController::class, 'getUserRole']);
     Route::post('/update-package', [AuthController::class, 'updatePackage']);
 });
+
+
+// email templates
+Route::apiResource('/temp/email', EmailTempController::class);
 
 Route::middleware('auth.api')->group(function () {
     // Route::get('/blvckbox', [BlvckboxController::class, 'index']);
