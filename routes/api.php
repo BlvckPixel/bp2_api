@@ -100,6 +100,7 @@ Route::post('/webhook/stripe', [SubscriptionController::class, 'webhook']);
 
 // Website
 Route::post('/send-custom-email', [EmailController::class, 'sendCustomEmail']);
+Route::post('/send-activation-email', [EmailController::class, 'sendAuthenticationEmail']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/activate-account/{token}', [AuthController::class, 'activateAccount']);
@@ -141,6 +142,8 @@ Route::middleware('auth.api')->group(function () {
     Route::put('/user', [AuthController::class, 'updateProfile']);
     Route::get('/user/role', [AuthController::class, 'getUserRole']);
     Route::post('/update-package', [AuthController::class, 'updatePackage']);
+    Route::delete('/user/{id}', [AuthController::class, 'deleteUser']);
+
 });
 
 

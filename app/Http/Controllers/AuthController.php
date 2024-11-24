@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\PasswordResetMail;
 use App\Models\Package;
 use App\Models\Payment;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -153,7 +154,17 @@ class AuthController extends Controller
         ]);
 
         // Send the activation email to the user
-        Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+        // Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+
+        // Mail::to($user->email)->send(new AllTemplateEmail($user->name, $activationToken));
+
+        $emailController = new EmailController();
+        $emailRequest = new Request();
+        $emailRequest->merge([
+            'emailArray' => [$user->email]
+        ]);
+        $emailController->sendAuthenticationEmail($emailRequest);
+
 
         // Optional: Send a notification email to an admin or a specific address
         // Mail::to('admin@example.com')->send(new AccountActivationMail($user, $activationToken));
@@ -386,6 +397,23 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Password reset failed: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while resetting the password.'], 500);
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            
+            // Delete related payments first (due to foreign key constraints)
+            Payment::where('user_id', $user->id)->delete();
+            
+            // Delete the user
+            $user->delete();
+
+            return response()->json(['message' => 'User account successfully deleted'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete user account'], 500);
         }
     }
 }
