@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use App\Models\User;
+
+use Stripe\Stripe;
+use Stripe\Customer;
 use Illuminate\Support\Str;
 // use Illuminate\Foundation\Auth\User;
 use App\Models\User;
@@ -17,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use App\Mail\PasswordResetMail;
 use App\Models\Package;
 use App\Models\Payment;
+use App\Http\Controllers\EmailController;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -153,7 +157,17 @@ class AuthController extends Controller
         ]);
 
         // Send the activation email to the user
-        Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+        // Mail::to($user->email)->send(new AccountActivationMail($user, $activationToken));
+
+        // Mail::to($user->email)->send(new AllTemplateEmail($user->name, $activationToken));
+
+        $emailController = new EmailController();
+        $emailRequest = new Request();
+        $emailRequest->merge([
+            'emailArray' => [$user->email]
+        ]);
+        $emailController->sendAuthenticationEmail($emailRequest);
+
 
         // Optional: Send a notification email to an admin or a specific address
         // Mail::to('admin@example.com')->send(new AccountActivationMail($user, $activationToken));
@@ -161,6 +175,25 @@ class AuthController extends Controller
         $token = Str::random(60);
         $user->api_token = hash('sha256', $token);
         $user->save();
+
+        // Create a Stripe customer
+        // Stripe::setApiKey(config('services.stripe.secret'));
+        // try {
+        //     $stripeCustomer = \Stripe\Customer::create([
+        //         'email' => $user->email,
+        //         'name' => $user->name,
+        //     ]);
+
+        //     // Save the Stripe customer ID to the user
+        //     $user->stripe_customer_id = $stripeCustomer->id;
+        //     $user->save();
+        // } catch (\Exception $e) {
+        //     // Handle the exception if Stripe customer creation fails
+        //     Log::error('Stripe customer creation failed: ' . $e->getMessage());
+        //     // Optionally, you can delete the user if Stripe customer creation is critical
+        //     $user->delete();
+        //     return response()->json(['error' => 'Registration failed. Please try again.'], 500);
+        // }
 
         return response()->json(['user' => $user, 'token' => $user->api_token, 'activationToken' => $activationToken], 201);
     }
@@ -386,6 +419,23 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             Log::error('Password reset failed: ' . $e->getMessage());
             return response()->json(['message' => 'An error occurred while resetting the password.'], 500);
+        }
+    }
+
+    public function deleteUser($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            
+            // Delete related payments first (due to foreign key constraints)
+            Payment::where('user_id', $user->id)->delete();
+            
+            // Delete the user
+            $user->delete();
+
+            return response()->json(['message' => 'User account successfully deleted'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete user account'], 500);
         }
     }
 }

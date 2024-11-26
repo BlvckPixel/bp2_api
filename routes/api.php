@@ -28,6 +28,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailTempController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\PayingController;
+use App\Http\Controllers\AdminSubscriptionController;
 
 
 
@@ -100,6 +101,7 @@ Route::post('/webhook/stripe', [SubscriptionController::class, 'webhook']);
 
 // Website
 Route::post('/send-custom-email', [EmailController::class, 'sendCustomEmail']);
+Route::post('/send-activation-email', [EmailController::class, 'sendAuthenticationEmail']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/activate-account/{token}', [AuthController::class, 'activateAccount']);
@@ -141,6 +143,8 @@ Route::middleware('auth.api')->group(function () {
     Route::put('/user', [AuthController::class, 'updateProfile']);
     Route::get('/user/role', [AuthController::class, 'getUserRole']);
     Route::post('/update-package', [AuthController::class, 'updatePackage']);
+    Route::delete('/user/{id}', [AuthController::class, 'deleteUser']);
+
 });
 
 
@@ -221,3 +225,14 @@ Route::group(['prefix' => 'mailchimp'], function () {
     Route::post('/audience/add-member', [MailchimpController::class, 'addMemberToMailchimpAudience']);
     Route::get('/audience/members', [MailchimpController::class, 'listMailchimpAudienceMembers']);
 });
+
+Route::prefix('admin/subscriptions')->group(function () {
+    Route::post('/', [AdminSubscriptionController::class, 'createSub']);
+    Route::get('/{id}', [AdminSubscriptionController::class, 'show']);
+    Route::put('/{id}', [AdminSubscriptionController::class, 'update']);
+    Route::delete('/{id}', [AdminSubscriptionController::class, 'destroy']);
+});
+
+Route::post('/subscription/payment', [PaymentController::class, 'createSubscriptionPayment']);
+
+Route::put('/subscription/change', [PaymentController::class, 'updateSubscription']);
