@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use App\Models\User;
+
+use Stripe\Stripe;
+use Stripe\Customer;
 use Illuminate\Support\Str;
 // use Illuminate\Foundation\Auth\User;
 use App\Models\User;
@@ -172,6 +175,25 @@ class AuthController extends Controller
         $token = Str::random(60);
         $user->api_token = hash('sha256', $token);
         $user->save();
+
+        // Create a Stripe customer
+        // Stripe::setApiKey(config('services.stripe.secret'));
+        // try {
+        //     $stripeCustomer = \Stripe\Customer::create([
+        //         'email' => $user->email,
+        //         'name' => $user->name,
+        //     ]);
+
+        //     // Save the Stripe customer ID to the user
+        //     $user->stripe_customer_id = $stripeCustomer->id;
+        //     $user->save();
+        // } catch (\Exception $e) {
+        //     // Handle the exception if Stripe customer creation fails
+        //     Log::error('Stripe customer creation failed: ' . $e->getMessage());
+        //     // Optionally, you can delete the user if Stripe customer creation is critical
+        //     $user->delete();
+        //     return response()->json(['error' => 'Registration failed. Please try again.'], 500);
+        // }
 
         return response()->json(['user' => $user, 'token' => $user->api_token, 'activationToken' => $activationToken], 201);
     }

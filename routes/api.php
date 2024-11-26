@@ -28,6 +28,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailTempController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\PayingController;
+use App\Http\Controllers\AdminSubscriptionController;
 
 
 
@@ -224,3 +225,12 @@ Route::group(['prefix' => 'mailchimp'], function () {
     Route::post('/audience/add-member', [MailchimpController::class, 'addMemberToMailchimpAudience']);
     Route::get('/audience/members', [MailchimpController::class, 'listMailchimpAudienceMembers']);
 });
+
+Route::prefix('admin/subscriptions')->group(function () {
+    Route::post('/', [AdminSubscriptionController::class, 'createSub']);
+    Route::get('/{id}', [AdminSubscriptionController::class, 'show']);
+    Route::put('/{id}', [AdminSubscriptionController::class, 'update']);
+    Route::delete('/{id}', [AdminSubscriptionController::class, 'destroy']);
+});
+
+Route::post('/subscription/payment', [PaymentController::class, 'createSubscriptionPayment']);

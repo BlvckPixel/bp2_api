@@ -15,13 +15,16 @@ class SubscriptionsController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'features' => 'required|array',
+            'stripe_price_id' => 'required|string',
         ]);
 
-        $package = Package::create($request->all());
+        \Log::info('Creating package with data: ', $validatedData);
+
+        $package = Package::create($validatedData);
 
         return response()->json($package, 201);
     }
@@ -35,14 +38,17 @@ class SubscriptionsController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'price' => 'sometimes|required|numeric',
             'features' => 'sometimes|required|array',
+            'stripe_price_id' => 'required|string',
         ]);
 
+        \Log::info('Updating package with data: ', $validatedData);
+
         $package = Package::findOrFail($id);
-        $package->update($request->all());
+        $package->update($validatedData);
 
         return response()->json($package);
     }
