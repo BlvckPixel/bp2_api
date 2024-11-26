@@ -234,3 +234,5 @@ Route::prefix('admin/subscriptions')->group(function () {
 });
 
 Route::post('/subscription/payment', [PaymentController::class, 'createSubscriptionPayment']);
+
+Route::put('/subscription/change', [PaymentController::class, 'updateSubscription']);
